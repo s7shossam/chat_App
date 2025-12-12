@@ -73,6 +73,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 SizedBox(height: 10),
                 CustomTextFormField(
+                  obscureText: true,
                   onChanged: (data) {
                     password = data;
                   },
@@ -87,7 +88,11 @@ class _LoginPageState extends State<LoginPage> {
                       try {
                         await login_user();
                         showSnackBar(context, 'Successfully logged in');
-                        Navigator.popAndPushNamed(context, ChatPage.id);
+                        Navigator.popAndPushNamed(
+                          context,
+                          ChatPage.id,
+                          arguments: email,
+                        );
                       } on FirebaseAuthException catch (e) {
                         if (e.code == 'user-not-found') {
                           showSnackBar(context, 'user not found');

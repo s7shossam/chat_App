@@ -28,3 +28,30 @@ class chat_Bubble extends StatelessWidget {
     );
   }
 }
+
+class chat_Bubble_friend extends StatelessWidget {
+  const chat_Bubble_friend({super.key, required this.message});
+  final Message message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Container(
+        padding: EdgeInsets.only(left: 16, top: 32, bottom: 32, right: 32),
+
+        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
+
+            bottomLeft: Radius.circular(16),
+          ),
+          color: const Color.fromARGB(255, 41, 96, 39),
+        ),
+        child: Text(message.message, style: TextStyle(color: Colors.white)),
+      ),
+    );
+  }
+}

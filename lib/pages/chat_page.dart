@@ -6,6 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatPage extends StatelessWidget {
   static String id = 'chatPage';
+  final _controller = ScrollController();
+
   CollectionReference messages = FirebaseFirestore.instance.collection(
     kmessagesCollection,
   );
@@ -14,8 +16,9 @@ class ChatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String email = ModalRoute.of(context)!.settings.arguments as String;
     return StreamBuilder<QuerySnapshot>(
-      stream: messages.orderBy(kCreatedAt).snapshots(),
+      stream: messages.orderBy(kCreatedAt, descending: true).snapshots(),
       builder: (context, snapshot) {
         //   FIX 1: Check loading first
 
@@ -53,9 +56,13 @@ class ChatPage extends StatelessWidget {
             children: [
               Expanded(
                 child: ListView.builder(
+                  reverse: true,
+                  controller: _controller,
                   itemCount: messagesList.length,
                   itemBuilder: (context, index) {
-                    return chat_Bubble(message: messagesList[index]);
+                    return messagesList[index].id == email
+                        ? chat_Bubble(message: messagesList[index])
+                        : chat_Bubble_friend(message: messagesList[index]);
                   },
                 ),
               ),
@@ -65,8 +72,17 @@ class ChatPage extends StatelessWidget {
                 child: TextField(
                   controller: controller,
                   onSubmitted: (data) {
-                    messages.add({'message': data, kCreatedAt: DateTime.now()});
+                    messages.add({
+                      'message': data,
+                      kCreatedAt: DateTime.now(),
+                      'id': email,
+                    });
                     controller.clear();
+                    _controller.animateTo(
+                      0,
+                      curve: Curves.easeOut,
+                      duration: const Duration(milliseconds: 500),
+                    );
                   },
                   decoration: InputDecoration(
                     hintText: 'Type your message here...',
